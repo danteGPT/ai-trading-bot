@@ -61,4 +61,5 @@ if __name__ == "__main__":
     end_date = datetime.now()  # Current date as the end date
 
     new_data = collect_historical_data(crypto_id, API_KEY, start_date, end_date)
+    new_data = preprocess_data(new_data)  # Add this line
     append_data_to_csv(new_data, 'Data.csv')
