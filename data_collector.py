@@ -3,13 +3,13 @@ import requests
 from datetime import datetime
 
 def collect_historical_data(crypto_id, api_key, start_date, end_date):
-    url = f'https://api.cryptocompare.com/data/v2/histoday'
+    url = f'https://min-api.cryptocompare.com/data/v2/histoday'
     params = {
         'fsym': crypto_id,
         'tsym': 'USD',
         'limit': 2000,
         'toTs': int(end_date.timestamp()),
-        'api_key': api_key
+        'api_key': '3b311037957c48cff5cf685396cfff76952c1afd5c6fa18ba5cc124b0b4c5095'
     }
     response = requests.get(url, params=params)
     if response.status_code == 200:
@@ -34,7 +34,7 @@ def append_data_to_csv(new_data, file_name):
 
 # Example usage of the functions
 if __name__ == "__main__":
-    API_KEY = 'your_api_key_here'
+    API_KEY = '3b311037957c48cff5cf685396cfff76952c1afd5c6fa18ba5cc124b0b4c5095'
     crypto_id = 'BTC'
     start_date = datetime(2020, 1, 1)  # Example start date
     end_date = datetime.now()  # Current date as end date

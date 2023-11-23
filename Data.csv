@@ -1,8 +1,2 @@
-Field1
-timestamp
-price
-volume
-SMA_15
-EMA_15
-RSI
-target
+timestamp,price,price.1,volume,SMA_15,EMA_15,RSI,target,close,volumeto
+,,,,,,,,37548.22,245118511.59
