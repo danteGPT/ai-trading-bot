@@ -8,8 +8,48 @@ def calculate_rsi(data, window=14):
     loss = (-delta.where(delta < 0, 0)).rolling(window=window).mean()
     rs = gain / loss
     return 100 - (100 / (1 + rs))
+    
+def calculate_macd(data, short_window=12, long_window=26, signal=9):
+    data['EMA_short'] = data['price'].ewm(span=short_window, adjust=False).mean()
+    data['EMA_long'] = data['price'].ewm(span=long_window, adjust=False).mean()
+    data['MACD'] = data['EMA_short'] - data['EMA_long']
+    data['MACD_Signal'] = data['MACD'].ewm(span=signal, adjust=False).mean()
+    return data
+
+def calculate_bollinger_bands(data, window=20):
+    data['SMA'] = data['price'].rolling(window=window).mean()
+    data['BB_std'] = data['price'].rolling(window=window).std()
+    data['Upper_Band'] = data['SMA'] + (data['BB_std'] * 2)
+    data['Lower_Band'] = data['SMA'] - (data['BB_std'] * 2)
+    return data
+
+def calculate_stochastic_oscillator(data, k_window=14, d_window=3):
+    data['L14'] = data['low'].rolling(window=k_window).min()
+    data['H14'] = data['high'].rolling(window=k_window).max()
+    data['%K'] = 100 * ((data['price'] - data['L14']) / (data['H14'] - data['L14']))
+    data['%D'] = data['%K'].rolling(window=d_window).mean()
+    return data
+
+def calculate_atr(data, window=14):
+    data['High-Low'] = data['high'] - data['low']
+    data['High-PrevClose'] = abs(data['high'] - data['price'].shift(1))
+    data['Low-PrevClose'] = abs(data['low'] - data['price'].shift(1))
+    data['TR'] = data[['High-Low', 'High-PrevClose', 'Low-PrevClose']].max(axis=1)
+    data['ATR'] = data['TR'].rolling(window=window).mean()
+    return data
+
+def calculate_vwap(data):
+    data['Cum_Volume'] = data['volume'].cumsum()
+    data['Cum_Vol_Price'] = (data['volume'] * data['price']).cumsum()
+    data['VWAP'] = data['Cum_Vol_Price'] / data['Cum_Volume']
+    return data
 
 def preprocess_data(data):
+    data = calculate_macd(data)
+    data = calculate_bollinger_bands(data)
+    data = calculate_stochastic_oscillator(data)
+    data = calculate_atr(data)
+    data = calculate_vwap(data)
     data['SMA_15'] = data['price'].rolling(window=15).mean()
     data['EMA_15'] = data['price'].ewm(span=15, adjust=False).mean()
     data['RSI'] = calculate_rsi(data)
