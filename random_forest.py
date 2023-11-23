@@ -8,7 +8,13 @@ def load_data(filename):
 
 def prepare_data(data):
     features = data[['SMA_15', 'EMA_15', 'RSI', 'MACD', 'Upper_Band', 'Lower_Band', '%K', '%D', 'ATR', 'VWAP']]
+    features = features.fillna(features.mean())
+    
     target = data['target']
+    
+    # Fill NaN values in the target with the mean
+    target = target.fillna(target.mean())
+    
     return train_test_split(features, target, test_size=0.2, random_state=42)
 
 def train_random_forest(X_train, y_train):
